@@ -10,7 +10,10 @@ from PIL import Image
 from keras.layers import TFSMLayer  # type: ignore
 import tensorflow as tf
 from pathlib import Path
+import logging
 
+
+logging.basicConfig(level=logging.DEBUG)
 # Initialize the app
 app = FastAPI()
 
@@ -87,6 +90,7 @@ async def predict(file: UploadFile = File(...)):
         })
 
     except Exception as e:
+        logging.error(f"Error during prediction: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 # Run the server (commented out for deployment)
