@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 100);
 
             // Send request to FastAPI
-            const response = await fetch("https://127.0.0.1:8000/predict", {
+            const response = await fetch("https://web-production-b7cf.up.railway.app//predict", {
                 method: "POST",
                 body: formData,
             });
