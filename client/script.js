@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 100);
 
             // Send request to FastAPI
-            const response = await fetch("https://web-plant-disease.up.railway.app///predict", {
+            const response = await fetch("https://web-plant-disease.up.railway.app/predict", {
                 method: "POST",
                 body: formData,
             });
