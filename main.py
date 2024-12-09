@@ -38,7 +38,7 @@ async def serve_homepage():
 
 
 # Model configuration
-MODEL_PATH = r"C:\Users\User\Desktop\Deep Learning\models\model_1"
+MODEL_PATH = "./model"
 MODEL = TFSMLayer(MODEL_PATH, call_endpoint="serving_default")
 CLASS_NAMES = ["Potato___Early_blight", "Potato___Late_blight", "Potato___healthy"]
 
