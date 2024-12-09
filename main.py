@@ -1,15 +1,15 @@
+import os
+import tempfile
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import numpy as np
 from io import BytesIO
 from PIL import Image
-import uvicorn
-from pathlib import Path
 from keras.layers import TFSMLayer  # type: ignore
 import tensorflow as tf
-from fastapi.responses import JSONResponse
+from pathlib import Path
 
 # Initialize the app
 app = FastAPI()
@@ -36,7 +36,6 @@ async def serve_homepage():
     else:
         return HTMLResponse(content="index.html not found", status_code=404)
 
-
 # Model configuration
 MODEL_PATH = "./model"
 MODEL = TFSMLayer(MODEL_PATH, call_endpoint="serving_default")
@@ -55,9 +54,19 @@ def read_file_as_image(data: bytes) -> np.ndarray:
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     try:
+        # Create a temporary directory and save the uploaded image
+        temp_dir = tempfile.mkdtemp()  # Create a temporary directory
+        temp_file_path = os.path.join(temp_dir, file.filename)  # Define the file path
+
+        # Save the uploaded image to the temporary directory
+        with open(temp_file_path, "wb") as f:
+            f.write(await file.read())
+        
+        # Log the path of the saved file (optional, for debugging purposes)
+        print(f"File saved temporarily at: {temp_file_path}")
+
         # Read and process the uploaded image
-        image_data = await file.read()
-        image = read_file_as_image(image_data)
+        image = read_file_as_image(open(temp_file_path, "rb").read())
         img_batch = np.expand_dims(image, axis=0)  # Add batch dimension
 
         # Make predictions
@@ -70,13 +79,16 @@ async def predict(file: UploadFile = File(...)):
         predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
         confidence = np.max(predictions[0]) * 100
 
+        # Return the prediction and the temporary file path
         return JSONResponse(content={
             "class": predicted_class,
-            "confidence": confidence
+            "confidence": confidence,
+            "file_path": temp_file_path  # Include the file path in the response
         })
+
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-# Run the server
-#if __name__ == "__main__":
- #   uvicorn.run(app, host="127.0.0.1", port=8000)
+# Run the server (commented out for deployment)
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="127.0.0.1", port=8000)
