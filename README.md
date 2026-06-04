@@ -10,7 +10,7 @@ A deep learning image classification application trained on agricultural dataset
 ```mermaid
 graph TD
     Client[Client Browser / Mobile App] -->|Upload leaf image| FastAPI[FastAPI Server]
-    FastAPI -->|Preprocess Image (256x256, rescale)| Preprocessor[TensorFlow Preprocessing Pipe]
+    FastAPI -->|"Preprocess Image (256x256, rescale)"| Preprocessor[TensorFlow Preprocessing Pipe]
     Preprocessor -->|Tensor Input| Model[CNN Classification Model (TensorFlow/Keras)]
     Model -->|Softmax Probability vector| Postprocessor[Postprocessing & Thresholding]
     Postprocessor -->|Disease Label & Confidence| FastAPI
