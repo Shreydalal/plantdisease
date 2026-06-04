@@ -14,7 +14,7 @@ graph TD
     Preprocessor -->|Tensor Input| Model["CNN Classification Model (TensorFlow/Keras)"]
     Model -->|Softmax Probability vector| Postprocessor[Postprocessing & Thresholding]
     Postprocessor -->|Disease Label & Confidence| FastAPI
-    FastAPI -->|JSON Response ("Early Blight / Late Blight / Healthy")| Client
+    FastAPI -->|"JSON Response (Early Blight / Late Blight / Healthy)"| Client
 ```
 
 ## Performance Metrics & Results
